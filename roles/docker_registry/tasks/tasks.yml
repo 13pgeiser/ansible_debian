@@ -1,0 +1,16 @@
+---
+
+- name: Setup Docker registry
+  docker_container:
+    name: registry
+    image: registry:2.7.1
+    ports:
+    - "5000:5000"
+    restart_policy: 'always'
+    volumes:
+    - registry:/var/lib/registry
+    network_mode: bridge
+    networks:
+      - name: bridge
+    purge_networks: yes
+    networks_cli_compatible: yes

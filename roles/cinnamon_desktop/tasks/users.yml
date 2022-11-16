@@ -1,0 +1,40 @@
+---
+
+- name: "Get item dict"
+  set_fact:
+    cinnamon_settings={{ item.cinnamon | default({}) }}
+
+- name: "{{ item.name }} : Sleep timeout"
+  dconf:
+    key: /org/cinnamon/settings-daemon/plugins/power/sleep-inactive-ac-timeout
+    value: "{{ cinnamon_settings['sleep_timeout']|default(1200) }}"
+  become_user: "{{ item.name }}"
+  become: yes
+
+- name: "{{ item.name }} : Audible bell"
+  dconf:
+    key: /org/cinnamon/desktop/wm/preferences/audible-bell
+    value: "{{ 'true' if cinnamon_settings['audible_bell']|default(false) else 'false' }}"
+  become_user: "{{ item.name }}"
+  become: yes
+
+- name: "{{ item.name }} : Numlock"
+  dconf:
+    key: /org/cinnamon/settings-daemon/peripherals/keyboard/numlock-state
+    value: "{{ \"'on'\" if cinnamon_settings['numlock-state-on']|default(true) else \"'off'\" }}"
+  become_user: "{{ item.name }}"
+  become: yes
+
+- name: "{{ item.name }} : Gnome terminal menu accel on F10"
+  dconf:
+    key: /org/gnome/terminal/legacy/menu-accelerator-enabled
+    value: "{{ cinnamon_settings['menu-accelerator-enabled']|default('false') }}"
+  become_user: "{{ item.name }}"
+  become: yes
+
+- name: "{{ item.name }} : Nemo image thumbnails size limit"
+  dconf:
+    key: /org/nemo/preferences/thumbnail-limit
+    value: "{{ cinnamon_settings['thumbnail-limit']|default('@u 20') }}"
+  become_user: "{{ item.name }}"
+  become: yes

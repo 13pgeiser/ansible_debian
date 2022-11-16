@@ -1,0 +1,6 @@
+---
+
+- name: Restart docker service
+  service: name=docker state=restarted enabled=yes daemon_reload=yes
+  when: daemon_settings.changed or proxy_settings.changed
+  become: yes

@@ -1,0 +1,21 @@
+---
+
+- name: "Check if group {{ item.1 }} exists"
+  command:
+    cmd: "egrep -i '^{{ item.1 }}:' /etc/group"
+  register: group_exists
+  changed_when: false
+  ignore_errors: yes
+
+- name: "Is {{ item.0.name }} already member of group {{ item.1 }}"
+  command:
+    cmd: "egrep -i '^{{ item.1 }}.*{{ item.0.name }}.*' /etc/group"
+  register: user_is_member_of_group
+  changed_when: false
+  ignore_errors: yes
+
+- name: Add {{ item.0.name }} to group {{ item.1 }}"
+  command:
+    cmd: "usermod -a -G {{ item.1 }} {{ item.0.name }}"
+  when: group_exists.rc == 0 and user_is_member_of_group.rc != 0
+

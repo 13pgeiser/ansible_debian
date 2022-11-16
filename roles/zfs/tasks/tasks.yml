@@ -1,0 +1,80 @@
+---
+
+- name: Install linux headers
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=True
+    install_recommends=False
+  vars:
+    pkgs:
+    - linux-headers-amd64
+
+- name: Add Buster backports repository
+  apt_repository:
+    repo: 'deb http://http.debian.net/debian buster-backports main contrib non-free'
+    state: present
+    update_cache: yes
+  when: ansible_distribution_major_version == '10'
+
+- name: Install zfs-dkms from backports
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=False
+    default_release=buster-backports
+  vars:
+    pkgs:
+    - zfs-dkms
+  when: ansible_distribution_major_version == '10'
+
+- name: Install zfs-dkms
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=False
+  vars:
+    pkgs:
+    - zfs-dkms
+  when: ansible_distribution_major_version == '11'
+
+- name: Load zfs module
+  modprobe:
+    name: zfs
+    state: present
+
+- name: Install zfsutils-linux from backports
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=False
+    default_release=buster-backports
+  vars:
+    pkgs:
+    - zfsutils-linux
+  when: ansible_distribution_major_version == '10'
+
+- name: Install zfsutils-linux
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=False
+  vars:
+    pkgs:
+    - zfsutils-linux
+  when: ansible_distribution_major_version == '11'
+
+- name: Install zfsnap packages
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=False
+  vars:
+    pkgs:
+    - zfsnap
+

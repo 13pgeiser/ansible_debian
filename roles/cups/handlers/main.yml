@@ -1,0 +1,13 @@
+---
+
+- name: Set default PaperSize to A4
+  command: paperconfig -p a4
+  when: paperconf.stdout != "a4"
+  become: yes
+
+- name: Restart Cups
+  service:
+    name: cups
+    state: restarted
+  when: cups_config.changed
+  become: yes

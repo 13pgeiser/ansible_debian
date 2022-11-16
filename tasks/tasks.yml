@@ -1,0 +1,151 @@
+---
+
+- name: check if we run precisely debian
+  fail: msg="Unsupported distribution"
+  when: ansible_distribution != 'Debian'
+
+- name: set apt cache if configured
+  template:
+    src: proxy.j2
+    dest: /etc/apt/apt.conf.d/proxy
+    owner: root
+    group: root
+    mode: 0644
+  when: apt_cache is defined
+
+- name: Add repositories for main contrib non-frees
+  apt_repository:
+    repo: "deb http://http.debian.net/debian {{ ansible_distribution_release }} main contrib non-free"
+    state: present
+    update_cache: yes
+
+- name: Install base packages
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=True
+    install_recommends=False
+  vars:
+    pkgs:
+    - aptitude
+    - python3-pip
+    - python3-psutil
+    - cryptsetup
+    - pv
+    - vim
+    - laptop-mode-tools
+    - hdparm
+    - sdparm
+    - acpid
+    - mc
+    - rsync
+    - neofetch
+
+- name: Neofetch
+  command: "neofetch --stdout"
+  register: neofetch
+  changed_when: false
+
+- name: Print neofetch information
+  debug:
+    msg: "{{ neofetch.stdout.split('\n') }}"
+    verbosity: 2
+
+- name: Print informations
+  debug:
+    msg:
+      - "ansible_host                       = {{ ansible_host }}"
+      - "ansible_architecture               = {{ ansible_architecture }}"
+      - "ansible_os_family                  = {{ ansible_os_family }}"
+      - "ansible_processor                  = {{ ansible_processor[1] }} {{ ansible_processor[2] }}  threads -> {{ ansible_processor|count/3 }}"
+      - "ansible_bios_version               = {{ ansible_bios_version }}"
+      - "ansible_bios_date                  = {{ ansible_bios_date }}"
+      - "ansible_date_time                  = {{ ansible_date_time.iso8601_micro }}"
+      - "ansible_distribution               = {{ ansible_distribution }}"
+      - "ansible_distribution_release       = {{ ansible_distribution_release }}"
+      - "ansible_distribution_major_version = {{ ansible_distribution_major_version }}"
+      - "ansible_lsb.id                     = {{ ansible_lsb.id if 'id' in ansible_lsb else 'undefined' }}"
+      - "ansible_lsb.description            = {{ ansible_lsb.description if 'description' in ansible_lsb else 'undefined' }}"
+      - "ansible_lsb.release                = {{ ansible_lsb.release if 'release' in ansible_lsb else 'undefined' }}"
+      - "ansible_lsb.codename               = {{ ansible_lsb.codename if 'codename' in ansible_lsb else 'undefined' }}"
+      - "ansible_machine                    = {{ ansible_machine }}"
+      - "ansible_kernel                     = {{ ansible_kernel }}"
+      - "ansible_memtotal_mb                = {{ ansible_memtotal_mb }}"
+      - "ansible_memfree_mb                 = {{ ansible_memfree_mb }}"
+
+- name: Install microcode
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=True
+    install_recommends=False
+  vars:
+    pkgs:
+    - amd64-microcode
+    - intel-microcode
+  when: ansible_architecture == "x86_64"
+
+- name: Install non-free firmwares
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=True
+    install_recommends=False
+  vars:
+    pkgs:
+    - firmware-linux-nonfree
+    - firmware-misc-nonfree
+    - firmware-linux-free
+    - firmware-linux
+    - firmware-atheros
+    - firmware-brcm80211
+    - firmware-intel-sound
+    - firmware-iwlwifi
+    - firmware-libertas
+    - firmware-ralink
+    - firmware-realtek
+
+- name: Update all packages to the latest version
+  apt:
+    upgrade: dist
+
+- name: Force Swiss keyboard settings
+  lineinfile:
+    regexp: "^{{ item | regex_replace('=.*', '=') }}"
+    line: "{{ item }}"
+    dest: /etc/default/keyboard
+  with_items:
+    - XKBLAYOUT="ch"
+    - XKBVARIANT="fr"
+    - XKBOPTIONS="terminate:ctrl_alt_bks"
+
+- name: select default locale (English International)
+  debconf:
+    name: locales
+    question: locales/default_environment_locale
+    value: en_IN
+    vtype: select
+  notify:
+    - rebuild locales database
+
+- name: /etc/locale.gen
+  lineinfile:
+    dest: /etc/locale.gen
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: "{{ item.state }}"
+  with_items:
+    - { regexp: '^#? ?en_IN UTF-8', line: 'en_IN UTF-8', state: present }
+    - { regexp: '^#? ?en_US.UTF-8 UTF-8', line: 'en_US.UTF-8 UTF-8', state: present }
+  notify:
+    - rebuild locales database
+
+- name: Remove brltty (causes troubles with USB-Uart cables)
+  apt:
+    name="{{ pkgs }}"
+    state="absent"
+  vars:
+    pkgs:
+    - brltty
+
+

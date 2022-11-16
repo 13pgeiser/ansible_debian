@@ -1,0 +1,8 @@
+{
+{% if docker_dataroot is defined %}
+  "data-root": "{{ docker_dataroot }}",
+{% endif %}
+{% if docker_insecure_registries is defined %}
+  "insecure-registries": ["{{ '", "'.join(docker_insecure_registries) }}"]
+{% endif %}
+}

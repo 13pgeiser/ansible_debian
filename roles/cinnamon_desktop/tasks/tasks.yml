@@ -1,0 +1,243 @@
+---
+
+- name: Install cinammon packages
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=True
+  vars:
+    pkgs:
+    - task-cinnamon-desktop
+    - gnome-terminal
+    - dconf-editor
+    - libglx-mesa0
+    - libgl1-mesa-dri
+    - mesa-opencl-icd
+    - mesa-va-drivers
+    - mesa-vdpau-drivers
+    - intel-media-va-driver-non-free
+    - i965-va-driver-shaders
+    - vainfo
+    - vdpauinfo
+    - redshift-gtk
+
+- name: Install git and gitk
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=True
+  vars:
+    pkgs:
+    - git
+    - gitk
+    - git-gui
+    - git-lfs
+    - git-svn
+
+- name: Install Virtualization packages
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=True
+  vars:
+    pkgs:
+    - libvirt-clients
+    - libvirt-daemon-system
+    - libguestfs-tools
+    - virt-manager
+    - qemu-kvm
+  when: ansible_architecture != 'armv7l'
+
+- name: autostart default network
+  command: virsh -c qemu:///system net-autostart default
+  when: ansible_architecture != 'armv7l'
+
+- name: Install samba
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=True
+  vars:
+    pkgs:
+    - samba
+
+- name: Make home writable in samba
+  lineinfile:
+    path=/etc/samba/smb.conf
+    firstmatch=yes
+    insertafter='\[homes\]'
+    regexp='   read only =.*'
+    line='   read only = no'
+  notify: restart samba service
+
+- name: Install productivity packages
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=True
+  vars:
+    pkgs:
+    - chromium
+    - fonts-liberation
+    - libgl1-mesa-dri
+    - ttf-mscorefonts-installer
+    - ttf-xfree86-nonfree
+    - fonts-freefont-ttf
+    - ttf-bitstream-vera
+    - fonts-liberation
+    - fonts-lyx
+    - fonts-ocr-b
+    - geeqie
+    - scribus
+    - scribus-data
+    - icc-profiles
+    - scribus-template
+    - openclipart
+    - pdftk
+    - img2pdf
+    - vlc
+    - kdenlive
+    - audacity
+    - brasero
+    - gimp
+    - gimp-data
+    - inkscape
+    - handbrake
+    - handbrake-cli
+#    - displaycal
+    - gnome-color-manager
+    - default-jdk
+    - flatpak
+    - gnome-software-plugin-flatpak
+    - gnome-software-plugin-snap
+    - snapd
+    - hugin
+    - x2goclient
+    - fbreader
+    - gparted
+    - smartmontools
+    - texlive-extra-utils
+
+- name: Source all profiles in lightdm + cinnamon
+  copy:
+    content: |
+      test -f /etc/profile && . /etc/profile
+      test -f "$HOME/.profile" && . "$HOME/.profile"
+      test -f /etc/xprofile && . /etc/xprofile
+      test -f "$HOME/.xprofile" && . "$HOME/.xprofile"
+    dest: /etc/X11/Xsession.d/70fix_lightdm_gpv
+    mode: 0644
+
+- name: set deb_host_gnu_type
+  set_fact:
+    deb_host_gnu_type: "{{ architectures[ansible_architecture] }}"
+  vars:
+    architectures:
+      armv7l: arm-linux-gnueabihf
+      x86_64: x86_64-linux-gnu
+
+- name: Download VLC youtube.luac
+  get_url:
+    url: https://raw.githubusercontent.com/videolan/vlc/master/share/lua/playlist/youtube.lua
+    dest: "/usr/lib/{{ deb_host_gnu_type }}/vlc/lua/playlist/youtube.luac"
+    mode: '0644'
+
+- name: Install productivity packages (2)
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=True
+  vars:
+    pkgs:
+    - liblensfun-bin
+    - nvidia-openjdk-8-jre
+  when: ansible_architecture != 'armv7l'
+
+- name: Add repo for backports
+  apt_repository:
+    repo: 'deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free'
+    state: present
+    update_cache: yes
+  when: ansible_distribution_major_version == '10'
+
+- name: Install darktable from backports.
+  apt:
+    name: darktable
+    state: present
+    default_release: "{{ ansible_distribution_release }}-backports"
+    update_cache: yes
+  when: ansible_distribution_major_version == '10'
+
+- name: Install darktable
+  apt:
+    name: darktable
+    state: present
+    update_cache: yes
+  when: ansible_distribution_major_version == '11'
+
+- name: Install "snap-store"
+  snap:
+    name: snap-store
+  when: ansible_architecture != 'armv7l'
+
+- name: Install "vscode" with option --classic
+  snap:
+    name: code
+    classic: yes
+
+- name: Increase limits for Visual Studio
+  sysctl: # For visual studio
+    name: fs.inotify.max_user_watches
+    value: '524288'
+    sysctl_set: yes
+
+- name: Install "eclipse" with option --classic
+  snap:
+    name: eclipse
+    classic: yes
+  when: ansible_architecture != 'armv7l'
+
+- name: Install "android-studio" with option --classic
+  snap:
+    name: android-studio
+    classic: yes
+  when: ansible_architecture != 'armv7l'
+
+- name: Install "skype" with option --classic
+  snap:
+    name: skype
+    classic: yes
+  when: ansible_architecture != 'armv7l'
+
+- name: Install "zoom-client"
+  snap:
+    name: zoom-client
+  when: ansible_architecture != 'armv7l'
+
+- name: Installdeps for android-studio
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=True
+  vars:
+    pkgs:
+    - qemu-kvm
+    - virt-manager
+    - bridge-utils
+  when: ansible_architecture != 'armv7l'
+
+- name: update lensfun data
+  command: lensfun-update-data
+  register: lensfun
+  failed_when: ( lensfun.rc not in [ 0, 1 ] )
+  when: ansible_architecture != 'armv7l'
+
+- include: users.yml
+  with_items: "{{ users }}"

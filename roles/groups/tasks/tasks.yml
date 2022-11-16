@@ -1,0 +1,8 @@
+---
+
+
+- include_tasks: set_group.yml
+  with_subelements:
+    - "{{ users }}"
+    - groups
+

@@ -1,0 +1,32 @@
+---
+
+- name: Install cups and hplip
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=True
+  vars:
+    pkgs:
+    - system-config-printer
+    - hpijs-ppds
+    - hplip
+    - hp-ppd
+    - cups
+    - printer-driver-cups-pdf
+
+- name: overwrite printer files
+  copy:
+    src: printers/
+    dest: /etc/cups
+    owner: root
+    group: lp
+    mode: 0640
+  notify: Restart Cups
+  register: cups_config
+
+- name: Get paper config
+  command: paperconf
+  register: paperconf
+  changed_when: false
+
