@@ -1,0 +1,22 @@
+---
+
+- name: Set distination for deb packages
+  set_fact:
+    rtl8814au_folder=/root/rtl8814au/
+
+- name: copy driver
+  copy:
+    src: rtl8814au/
+    dest: "{{ rtl8814au_folder }}"
+    owner: root
+    group: root
+    mode: 0644
+    force: no
+
+- name: Install rtl8814au dkms
+  apt:
+    deb: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ rtl8814au_folder }}/rtl8814au-dkms_5.8.5.1_all.deb"
+

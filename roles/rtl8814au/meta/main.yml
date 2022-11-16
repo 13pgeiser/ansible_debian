@@ -1,0 +1,17 @@
+galaxy_info:
+  role_name: ansible_rtl8814au
+  author: Pascal Geiser
+  description: Install Realtek 8814AU driver (using dkms)
+  license: license MIT
+  min_ansible_version: 2.8
+  platforms:
+  - name: Debian
+    versions:
+      - buster
+  galaxy_tags:
+    - debian
+    - buster
+    - rtl8814au
+    - realtek
+dependencies: []
+

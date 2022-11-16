@@ -1,0 +1,62 @@
+---
+
+- name: Install linux headers
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=True
+    install_recommends=False
+  vars:
+    pkgs:
+    - linux-headers-amd64
+    - dkms
+
+      #- name: set facts
+      #  set_fact:
+      #    deb: 'realtek-rtl88xxau-dkms_5.2.20.2~20190210-0kali1_all.deb'
+      #    hash: 'sha256:47e7c0e06fea088ec9ee83ad2f434d2799c28ae5052edc0cafc83b77b06d734e'
+
+      #- name: set facts
+      #  set_fact:
+      #    deb: 'realtek-rtl88xxau-dkms_5.2.20.2~20190617-0kali1_all.deb'
+      #    hash: 'sha256:83e90bf5411b219d7af8844ca2395c053b07ee88c781d8b1835772c95298517c'
+
+      #- name: set facts
+      #  set_fact:
+      #    deb: 'realtek-rtl88xxau-dkms_5.3.4~20191031-0kali1_all.deb'
+      #    hash: 'sha256:3bf7dce995c09ca1814479aaf644d17f24cd327ee27712205a02f080a2046c42'
+
+      #- name: set facts
+      # set_fact:
+      #   deb: 'realtek-rtl88xxau-dkms_5.3.4~20200115-0kali1_all.deb'
+      #   hash: 'sha256:5ca9f94d696f85109659feb67042eb483e9007333f61a3ee08cf1f2cde24aa56'
+
+      #- name: set facts
+      #  set_fact:
+      #    deb: 'realtek-rtl88xxau-dkms_5.6.4.2~git20200916-0kali1_all.deb'
+      #    hash: 'sha256:f5837e4b4e057bff7a145e346e386c4144d69eecf0e419131c8e941459c58c55'
+
+      #- name: set facts
+      #  set_fact:
+      #    deb: 'realtek-rtl88xxau-dkms_5.6.4.2~git20210118-0kali1_all.deb'
+      #    hash: 'sha256:19146a3a56ec2df7c326b6d059546b5387b6892cec78a38b3ed62ce62aa2062a'
+
+- name: set facts
+  set_fact:
+    deb: 'realtek-rtl88xxau-dkms_5.6.4.2~git20210327.c0ce817-0kali1_all.deb'
+    hash: 'sha256:9d9b059f62ec62d618ecd134615cfdb5e82cb4b19bd7d35fad9de2add41d8c0c'
+
+- name: download rtl8812au-dkms deb
+  get_url:
+    url: "http://http.kali.org/pool/contrib/r/realtek-rtl88xxau-dkms/{{ deb }}"
+    dest: "/root/{{ deb }}"
+    mode: 0644
+    checksum: "{{ hash }}"
+
+- name: Install rtl8812au package
+  apt:
+    deb="/root/{{ deb }}"
+    state="present"
+    update_cache=True
+    install_recommends=False
+
