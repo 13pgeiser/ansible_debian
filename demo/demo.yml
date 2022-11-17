@@ -1,0 +1,9 @@
+---
+
+- hosts: demo
+  roles:
+    - ansible_debian
+    - ansible_debian/roles/users
+    - ansible_debian/roles/docker
+    - ansible_debian/roles/docker_portainer
+    - ansible_debian/roles/groups
