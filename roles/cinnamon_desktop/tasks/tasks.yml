@@ -109,7 +109,7 @@
     - inkscape
     - handbrake
     - handbrake-cli
-#    - displaycal
+    - displaycal
     - gnome-color-manager
     - default-jdk
     - flatpak
@@ -122,6 +122,10 @@
     - gparted
     - smartmontools
     - texlive-extra-utils
+    - yubikey-luks
+    - yubikey-manager
+    - yubikey-personalization
+    - yubioath-desktop
 
 - name: Source all profiles in lightdm + cinnamon
   copy:
@@ -220,7 +224,18 @@
     name: zoom-client
   when: ansible_architecture != 'armv7l'
 
-- name: Installdeps for android-studio
+- name: "Add {{ ansible_lsb.codename }}-backports repo"
+  apt_repository:
+    repo: 'deb http://httpredir.debian.org/debian {{ ansible_lsb.codename }}-backports main'
+    state: present
+    update_cache: yes
+
+- name: install swtpm from backports
+  apt:
+    name: swtpm
+    default_release: "{{ ansible_lsb.codename }}-backports"
+
+- name: Install deps qemu
   apt:
     name="{{ pkgs }}"
     state="present"
@@ -231,6 +246,8 @@
     - qemu-kvm
     - virt-manager
     - bridge-utils
+    - ovmf
+    - swtpm-tools
   when: ansible_architecture != 'armv7l'
 
 - name: update lensfun data
