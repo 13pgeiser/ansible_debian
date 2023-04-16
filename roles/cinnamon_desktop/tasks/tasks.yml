@@ -201,28 +201,28 @@
     value: '524288'
     sysctl_set: yes
 
-- name: Install "eclipse" with option --classic
-  snap:
-    name: eclipse
-    classic: yes
-  when: ansible_architecture != 'armv7l'
+#- name: Install "eclipse" with option --classic
+#  snap:
+#    name: eclipse
+#    classic: yes
+#  when: ansible_architecture != 'armv7l'
 
-- name: Install "android-studio" with option --classic
-  snap:
-    name: android-studio
-    classic: yes
-  when: ansible_architecture != 'armv7l'
+#- name: Install "android-studio" with option --classic
+#  snap:
+#    name: android-studio
+#    classic: yes
+#  when: ansible_architecture != 'armv7l'
 
-- name: Install "skype" with option --classic
-  snap:
-    name: skype
-    classic: yes
-  when: ansible_architecture != 'armv7l'
+#- name: Install "skype" with option --classic
+#  snap:
+#    name: skype
+#    classic: yes
+#  when: ansible_architecture != 'armv7l'
 
-- name: Install "zoom-client"
-  snap:
-    name: zoom-client
-  when: ansible_architecture != 'armv7l'
+#- name: Install "zoom-client"
+#  snap:
+#    name: zoom-client
+#  when: ansible_architecture != 'armv7l'
 
 - name: "Add {{ ansible_lsb.codename }}-backports repo"
   apt_repository:
