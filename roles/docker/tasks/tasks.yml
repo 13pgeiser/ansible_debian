@@ -33,6 +33,7 @@
     pkgs:
     - docker-ce
     - docker-compose
+    - docker-buildx-plugin
 
 - name: Create daemon.json
   template: src=daemon.json.j2 dest=/etc/docker/daemon.json owner=root group=root mode=0644
