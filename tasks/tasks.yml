@@ -40,14 +40,14 @@
     repo: "deb http://http.debian.net/debian {{ ansible_distribution_release }} main contrib non-free"
     state: present
     update_cache: yes
-  when: ansible_lsb.release == 11
+  when: ansible_lsb.major_release|int == 11
 
 - name: Add repositories for main contrib non-free-firmware
   apt_repository:
     repo: "deb http://http.debian.net/debian {{ ansible_distribution_release }} main contrib non-free-firmware"
     state: present
     update_cache: yes
-  when: ansible_lsb.release == 12
+  when: ansible_lsb.major_release|int == 12
 
 - name: Install base packages
   apt:
@@ -70,6 +70,28 @@
     - mc
     - rsync
     - neofetch
+  when: ansible_lsb.major_release|int == 11
+
+- name: Install base packages
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=True
+    install_recommends=False
+  vars:
+    pkgs:
+    - python3-psutil
+    - cryptsetup
+    - pv
+    - vim
+    - laptop-mode-tools
+    - hdparm
+    - sdparm
+    - acpid
+    - mc
+    - rsync
+    - neofetch
+  when: ansible_lsb.major_release|int == 12
 
 - name: Neofetch
   command: "neofetch --stdout"
