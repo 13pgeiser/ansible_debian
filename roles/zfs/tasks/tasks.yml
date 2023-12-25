@@ -10,6 +10,13 @@
     pkgs:
     - linux-headers-amd64
 
+- name: Accept license
+  ansible.builtin.debconf:
+    name: zfs-dkms
+    question: zfs-dkms/note-incompatible-licenses
+    value: true
+    vtype: boolean
+
 - name: Add Buster backports repository
   apt_repository:
     repo: 'deb http://http.debian.net/debian buster-backports main contrib non-free'
@@ -77,4 +84,3 @@
   vars:
     pkgs:
     - zfsnap
-

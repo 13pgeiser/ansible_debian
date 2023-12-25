@@ -18,5 +18,4 @@
     deb: "{{ item }}"
     state: present
   with_items:
-    - "{{ rtl8814au_folder }}/rtl8814au-dkms_5.8.5.1_all.deb"
-
+    - "{{ rtl8814au_folder }}/realtek-rtl8814au-dkms_5.8.5.1~git20230614.8a1908d-0kali1_all.deb"

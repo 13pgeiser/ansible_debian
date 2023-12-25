@@ -65,7 +65,7 @@
     - neofetch
   when: ansible_lsb.major_release|int == 11
 
-- name: Add repositories for main contrib non-free-firmware
+- name: Add repositories for main contrib non-free non-free-firmware
   apt_repository:
     repo: "deb http://http.debian.net/debian {{ ansible_distribution_release }} main contrib non-free non-free-firmware"
     state: present
