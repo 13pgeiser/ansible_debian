@@ -15,7 +15,7 @@
     repo: 'deb http://http.debian.net/debian buster-backports main contrib non-free'
     state: present
     update_cache: yes
-  when: ansible_distribution_major_version == '10'
+  when: ansible_lsb.major_release|int == 10
 
 - name: Install zfs-dkms from backports
   apt:
@@ -27,23 +27,7 @@
   vars:
     pkgs:
     - zfs-dkms
-  when: ansible_distribution_major_version == '10'
-
-- name: Install zfs-dkms
-  apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=False
-    install_recommends=False
-  vars:
-    pkgs:
-    - zfs-dkms
-  when: ansible_distribution_major_version == '11'
-
-- name: Load zfs module
-  modprobe:
-    name: zfs
-    state: present
+  when: ansible_lsb.major_release|int == 10
 
 - name: Install zfsutils-linux from backports
   apt:
@@ -55,7 +39,23 @@
   vars:
     pkgs:
     - zfsutils-linux
-  when: ansible_distribution_major_version == '10'
+  when: ansible_lsb.major_release|int == 10
+
+- name: Install zfs-dkms
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=False
+  vars:
+    pkgs:
+    - zfs-dkms
+  when: ansible_lsb.major_release|int >= 11
+
+- name: Load zfs module
+  modprobe:
+    name: zfs
+    state: present
 
 - name: Install zfsutils-linux
   apt:
@@ -66,7 +66,7 @@
   vars:
     pkgs:
     - zfsutils-linux
-  when: ansible_distribution_major_version == '11'
+  when: ansible_lsb.major_release|int >= 11
 
 - name: Install zfsnap packages
   apt:

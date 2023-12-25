@@ -42,13 +42,6 @@
     update_cache: yes
   when: ansible_lsb.major_release|int == 11
 
-- name: Add repositories for main contrib non-free-firmware
-  apt_repository:
-    repo: "deb http://http.debian.net/debian {{ ansible_distribution_release }} main contrib non-free-firmware"
-    state: present
-    update_cache: yes
-  when: ansible_lsb.major_release|int == 12
-
 - name: Install base packages
   apt:
     name="{{ pkgs }}"
@@ -71,6 +64,13 @@
     - rsync
     - neofetch
   when: ansible_lsb.major_release|int == 11
+
+- name: Add repositories for main contrib non-free-firmware
+  apt_repository:
+    repo: "deb http://http.debian.net/debian {{ ansible_distribution_release }} main contrib non-free-firmware"
+    state: present
+    update_cache: yes
+  when: ansible_lsb.major_release|int == 12
 
 - name: Install base packages
   apt:

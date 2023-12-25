@@ -168,7 +168,7 @@
     repo: 'deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free'
     state: present
     update_cache: yes
-  when: ansible_distribution_major_version == '10'
+  when: ansible_lsb.major_release|int == 10
 
 - name: Install darktable from backports.
   apt:
@@ -176,7 +176,7 @@
     state: present
     default_release: "{{ ansible_distribution_release }}-backports"
     update_cache: yes
-  when: ansible_distribution_major_version == '10'
+  when: ansible_lsb.major_release|int == 10
 
 - name: Install darktable
   apt:
@@ -184,7 +184,7 @@
     state: present
     default_release: "{{ ansible_distribution_release }}-backports"
     update_cache: yes
-  when: ansible_distribution_major_version == '11'
+  when: ansible_lsb.major_release|int >= 11
 
 - name: Install "snap-store"
   snap:
@@ -230,11 +230,18 @@
     repo: 'deb http://httpredir.debian.org/debian {{ ansible_lsb.codename }}-backports main'
     state: present
     update_cache: yes
+  when: ansible_lsb.major_release|int == 10
 
 - name: install swtpm from backports
   apt:
     name: swtpm
     default_release: "{{ ansible_lsb.codename }}-backports"
+  when: ansible_lsb.major_release|int == 10
+
+- name: install swtpm
+  apt:
+    name: swtpm
+  when: ansible_lsb.major_release|int >= 11
 
 - name: Install deps qemu
   apt:
