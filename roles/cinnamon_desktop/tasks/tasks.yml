@@ -16,11 +16,21 @@
     - mesa-opencl-icd
     - mesa-va-drivers
     - mesa-vdpau-drivers
-    - intel-media-va-driver-non-free
-    - i965-va-driver-shaders
     - vainfo
     - vdpauinfo
     - redshift-gtk
+
+- name: Install samba
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=False
+    install_recommends=True
+  vars:
+    pkgs:
+    - intel-media-va-driver-non-free
+    - i965-va-driver-shaders
+  when: ansible_lsb.major_release|int == 10
 
 - name: Install git and gitk
   apt:
