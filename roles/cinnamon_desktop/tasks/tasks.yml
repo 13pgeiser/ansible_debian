@@ -13,7 +13,6 @@
     - dconf-editor
     - libglx-mesa0
     - libgl1-mesa-dri
-    - mesa-opencl-icd
     - mesa-va-drivers
     - mesa-vdpau-drivers
     - intel-media-va-driver-non-free
