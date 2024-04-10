@@ -72,6 +72,12 @@
     update_cache: yes
   when: ansible_lsb.major_release|int == 12
 
+- name: Add repository for debian security.
+  apt_repository:
+    repo: "deb http://http.debian.net/debian-security {{ ansible_distribution_release }}-security main"
+    state: present
+    update_cache: yes
+
 - name: Install base packages
   apt:
     name="{{ pkgs }}"
