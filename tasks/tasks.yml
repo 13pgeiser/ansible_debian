@@ -72,6 +72,13 @@
     update_cache: yes
   when: ansible_lsb.major_release|int == 12
 
+- name: Add repositories for updates main non-free non-free-firmware
+  apt_repository:
+    repo: "deb http://http.debian.net/debian {{ ansible_distribution_release }}-updates main non-free non-free-firmware"
+    state: present
+    update_cache: yes
+  when: ansible_lsb.major_release|int == 12
+
 - name: Add repository for debian security.
   apt_repository:
     repo: "deb http://http.debian.net/debian-security {{ ansible_distribution_release }}-security main"
