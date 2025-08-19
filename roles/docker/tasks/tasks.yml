@@ -1,44 +1,5 @@
 ---
 
-- name: Installs Docker required packages
-  apt:
-    name="{{ pkgs }}" state=present
-  vars:
-    pkgs:
-    - apt-transport-https
-    - ca-certificates
-    - curl
-    - gnupg2
-    - software-properties-common
-    - python3-docker
-  when: ansible_lsb.major_release|int == 11
-
-- name: Get APT key
-  apt_key:
-    data: "{{ lookup('file', 'docker-apt.asc') }}"
-    state: "present"
-  when: ansible_lsb.major_release|int == 11
-
-- name: Add Docker APT repository
-  apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_lsb.codename }} stable"
-    state: "present"
-    update_cache: True
-  when: ansible_lsb.major_release|int == 11
-
-- name: Install docker-ce and docker-compose
-  apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=True
-    install_recommends=False
-  vars:
-    pkgs:
-    - docker-ce
-    - docker-compose
-    - docker-buildx-plugin
-  when: ansible_lsb.major_release|int == 11
-
 - name: Install docker.io and docker-compose
   apt:
     name="{{ pkgs }}"
@@ -49,7 +10,6 @@
     pkgs:
     - docker.io
     - docker-compose
-  when: ansible_lsb.major_release|int == 12
 
 - name: Create daemon.json
   template: src=daemon.json.j2 dest=/etc/docker/daemon.json owner=root group=root mode=0644
@@ -64,9 +24,3 @@
   template: src=http-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/http-proxy.conf owner=root group=root mode=0644
   register: proxy_settings
   notify: Restart docker service
-
-
-- name: Install python docker package with pip
-  pip:
-    name: docker
-  when: ansible_lsb.major_release|int == 11
