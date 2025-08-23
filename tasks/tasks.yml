@@ -118,18 +118,6 @@
     verbosity: 2
   when: ansible_lsb.major_release|int == 13
 
-- name: Install microcode
-  apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=True
-    install_recommends=False
-  vars:
-    pkgs:
-    - amd64-microcode
-    - intel-microcode
-  when: ansible_architecture == "x86_64"
-
 - name: Install non-free firmwares
   apt:
     name="{{ pkgs }}"
@@ -149,6 +137,7 @@
     - firmware-libertas
     - firmware-ralink
     - firmware-realtek
+    - firmware-mediatek
 
 - name: Update all packages to the latest version
   apt:
