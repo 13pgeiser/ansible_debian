@@ -12,10 +12,26 @@
     - docker-compose
     - python3-requests
 
+- name: Install docker cli
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=True
+    install_recommends=False
+  vars:
+    pkgs:
+    - docker-cli
+  when: ansible_lsb.major_release|int == 13
+
 - name: Create daemon.json
   template: src=daemon.json.j2 dest=/etc/docker/daemon.json owner=root group=root mode=0644
   register: daemon_settings
   notify: Restart docker service
+
+#- name: Create docker_insecure_registries
+#  template: src=insecure.j2 dest=/etc/containers/registries.conf.d/insecure.conf owner=root group=root mode=0644
+#  register: daemon_settings
+#  notify: Restart docker service
 
 - name: Create folder for systemd settings
   file: path=/etc/systemd/system/docker.service.d/ state=directory
@@ -25,3 +41,5 @@
   template: src=http-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/http-proxy.conf owner=root group=root mode=0644
   register: proxy_settings
   notify: Restart docker service
+
+
