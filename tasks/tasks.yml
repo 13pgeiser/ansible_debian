@@ -137,7 +137,17 @@
     - firmware-libertas
     - firmware-ralink
     - firmware-realtek
+
+- name: Install firmware-mediatek
+  apt:
+    name="{{ pkgs }}"
+    state="present"
+    update_cache=True
+    install_recommends=False
+  vars:
+    pkgs:
     - firmware-mediatek
+  when: ansible_lsb.major_release|int == 13
 
 - name: Update all packages to the latest version
   apt:
