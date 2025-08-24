@@ -17,37 +17,6 @@
     value: true
     vtype: boolean
 
-- name: Add Buster backports repository
-  apt_repository:
-    repo: 'deb http://http.debian.net/debian buster-backports main contrib non-free'
-    state: present
-    update_cache: yes
-  when: ansible_lsb.major_release|int == 10
-
-- name: Install zfs-dkms from backports
-  apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=False
-    install_recommends=False
-    default_release=buster-backports
-  vars:
-    pkgs:
-    - zfs-dkms
-  when: ansible_lsb.major_release|int == 10
-
-- name: Install zfsutils-linux from backports
-  apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=False
-    install_recommends=False
-    default_release=buster-backports
-  vars:
-    pkgs:
-    - zfsutils-linux
-  when: ansible_lsb.major_release|int == 10
-
 - name: Install zfs-dkms
   apt:
     name="{{ pkgs }}"
