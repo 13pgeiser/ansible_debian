@@ -71,6 +71,7 @@
     - acpid
     - mc
     - rsync
+    - systemd-timesyncd
 
 - name: Install neofetch
   apt:
