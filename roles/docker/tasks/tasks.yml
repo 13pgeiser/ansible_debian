@@ -9,6 +9,7 @@
   vars:
     pkgs:
     - docker.io
+    - docker-buildx
     - docker-compose
     - python3-requests
 
