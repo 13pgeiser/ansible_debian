@@ -26,7 +26,6 @@
   vars:
     pkgs:
     - zfs-dkms
-  when: ansible_lsb.major_release|int >= 11
 
 - name: Load zfs module
   modprobe:
@@ -42,7 +41,6 @@
   vars:
     pkgs:
     - zfsutils-linux
-  when: ansible_lsb.major_release|int >= 11
 
 - name: Install zfsnap packages
   apt:

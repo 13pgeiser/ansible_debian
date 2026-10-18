@@ -4,27 +4,27 @@
   debug:
     msg:
       - "ansible_host                       = {{ ansible_host }}"
-      - "ansible_architecture               = {{ ansible_architecture }}"
-      - "ansible_os_family                  = {{ ansible_os_family }}"
-      - "ansible_processor                  = {{ ansible_processor[1] }} {{ ansible_processor[2] }}  threads -> {{ ansible_processor|count/3 }}"
-      - "ansible_bios_version               = {{ ansible_bios_version }}"
-      - "ansible_bios_date                  = {{ ansible_bios_date }}"
-      - "ansible_date_time                  = {{ ansible_date_time.iso8601_micro }}"
-      - "ansible_distribution               = {{ ansible_distribution }}"
-      - "ansible_distribution_release       = {{ ansible_distribution_release }}"
-      - "ansible_distribution_major_version = {{ ansible_distribution_major_version }}"
-      - "ansible_lsb.id                     = {{ ansible_lsb.id if 'id' in ansible_lsb else 'undefined' }}"
-      - "ansible_lsb.description            = {{ ansible_lsb.description if 'description' in ansible_lsb else 'undefined' }}"
-      - "ansible_lsb.release                = {{ ansible_lsb.release if 'release' in ansible_lsb else 'undefined' }}"
-      - "ansible_lsb.codename               = {{ ansible_lsb.codename if 'codename' in ansible_lsb else 'undefined' }}"
-      - "ansible_machine                    = {{ ansible_machine }}"
-      - "ansible_kernel                     = {{ ansible_kernel }}"
-      - "ansible_memtotal_mb                = {{ ansible_memtotal_mb }}"
-      - "ansible_memfree_mb                 = {{ ansible_memfree_mb }}"
+      - "ansible_architecture               = {{ ansible_facts.architecture }}"
+      - "ansible_os_family                  = {{ ansible_facts.os_family }}"
+      - "ansible_processor                  = {{ ansible_facts.processor[1] }} {{ ansible_facts.processor[2] }}  threads -> {{ ansible_facts.processor|count/3 }}"
+      - "ansible_bios_version               = {{ ansible_facts.bios_version }}"
+      - "ansible_bios_date                  = {{ ansible_facts.bios_date }}"
+      - "ansible_date_time                  = {{ ansible_facts.date_time.iso8601_micro }}"
+      - "ansible_distribution               = {{ ansible_facts.distribution }}"
+      - "ansible_distribution_release       = {{ ansible_facts.distribution_release }}"
+      - "ansible_distribution_major_version = {{ ansible_facts.distribution_major_version }}"
+      - "ansible_lsb.id                     = {{ ansible_facts.lsb.id if 'id' in ansible_facts.lsb else 'undefined' }}"
+      - "ansible_lsb.description            = {{ ansible_facts.lsb.description if 'description' in ansible_facts.lsb else 'undefined' }}"
+      - "ansible_lsb.release                = {{ ansible_facts.lsb.release if 'release' in ansible_facts.lsb else 'undefined' }}"
+      - "ansible_lsb.codename               = {{ ansible_facts.lsb.codename if 'codename' in ansible_facts.lsb else 'undefined' }}"
+      - "ansible_machine                    = {{ ansible_facts.machine }}"
+      - "ansible_kernel                     = {{ ansible_facts.kernel }}"
+      - "ansible_memtotal_mb                = {{ ansible_facts.memtotal_mb }}"
+      - "ansible_memfree_mb                 = {{ ansible_facts.memfree_mb }}"
 
 - name: check if we run precisely debian
   fail: msg="Unsupported distribution"
-  when: ansible_distribution != 'Debian'
+  when: ansible_facts.distribution != 'Debian'
 
 - name: set apt cache if configured
   template:
@@ -35,23 +35,39 @@
     mode: 0644
   when: apt_cache is defined
 
+- name: Install python3-debian (required by deb822_repository)
+  apt:
+    name="python3-debian"
+    state="present"
+    update_cache=True
+    install_recommends=False
+
 - name: Add repositories for main contrib non-free non-free-firmware
-  apt_repository:
-    repo: "deb http://http.debian.net/debian {{ ansible_distribution_release }} main contrib non-free non-free-firmware"
+  deb822_repository:
+    name: debian
+    types: [deb]
+    uris: [http://http.debian.net/debian]
+    suites: ["{{ ansible_facts.distribution_release }}"]
+    components: [main, contrib, non-free, non-free-firmware]
     state: present
-    update_cache: yes
 
 - name: Add repositories for updates main non-free non-free-firmware
-  apt_repository:
-    repo: "deb http://http.debian.net/debian {{ ansible_distribution_release }}-updates main non-free non-free-firmware"
+  deb822_repository:
+    name: debian-updates
+    types: [deb]
+    uris: [http://http.debian.net/debian]
+    suites: ["{{ ansible_facts.distribution_release }}-updates"]
+    components: [main, non-free, non-free-firmware]
     state: present
-    update_cache: yes
 
 - name: Add repository for debian security.
-  apt_repository:
-    repo: "deb http://http.debian.net/debian-security {{ ansible_distribution_release }}-security main"
+  deb822_repository:
+    name: debian-security
+    types: [deb]
+    uris: [http://http.debian.net/debian-security]
+    suites: ["{{ ansible_facts.distribution_release }}-security"]
+    components: [main]
     state: present
-    update_cache: yes
 
 - name: Install base packages
   apt:
@@ -74,29 +90,6 @@
     - systemd-timesyncd
     - acl
 
-- name: Install neofetch
-  apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=True
-    install_recommends=False
-  vars:
-    pkgs:
-    - neofetch
-  when: ansible_lsb.major_release|int == 12
-
-- name: Neofetch
-  command: "neofetch --stdout"
-  register: neofetch
-  changed_when: false
-  when: ansible_lsb.major_release|int == 12
-
-- name: Print neofetch information
-  debug:
-    msg: "{{ neofetch.stdout.split('\n') }}"
-    verbosity: 2
-  when: ansible_lsb.major_release|int == 12
-
 - name: Install fastfetch
   apt:
     name="{{ pkgs }}"
@@ -106,19 +99,16 @@
   vars:
     pkgs:
     - fastfetch
-  when: ansible_lsb.major_release|int == 13
 
 - name: fastfetch
   command: "fastfetch"
   register: fastfetch
   changed_when: false
-  when: ansible_lsb.major_release|int == 13
 
 - name: Print fastfetch information
   debug:
     msg: "{{ fastfetch.stdout.split('\n') }}"
     verbosity: 2
-  when: ansible_lsb.major_release|int == 13
 
 - name: Install non-free firmwares
   apt:
@@ -149,7 +139,6 @@
   vars:
     pkgs:
     - firmware-mediatek
-  when: ansible_lsb.major_release|int == 13
 
 - name: Update all packages to the latest version
   apt:

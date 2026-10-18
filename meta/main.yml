@@ -1,12 +1,11 @@
 galaxy_info:
-  role_name: ansible_buster_base
+  role_name: ansible_trixie_base
   author: Pascal Geiser
   description: Install bare minimum + non-free firmwares.
   license: license MIT
   platforms:
   - name: Debian
     versions:
-      - bullseye
       - trixie
   galaxy_tags:
     - debian

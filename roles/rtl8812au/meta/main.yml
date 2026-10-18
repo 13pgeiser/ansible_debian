@@ -7,10 +7,9 @@ galaxy_info:
   platforms:
   - name: Debian
     versions:
-      - buster
+      - trixie
   galaxy_tags:
     - debian
-    - buster
     - rtl8812au
     - realtek
 dependencies: []

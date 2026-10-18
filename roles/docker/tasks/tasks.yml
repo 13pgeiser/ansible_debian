@@ -22,7 +22,6 @@
   vars:
     pkgs:
     - docker-cli
-  when: ansible_lsb.major_release|int == 13
 
 - name: Create daemon.json
   template: src=daemon.json.j2 dest=/etc/docker/daemon.json owner=root group=root mode=0644
