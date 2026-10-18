@@ -1,11 +1,11 @@
 ---
 
 - name: Set distination for deb packages
-  set_fact:
+  ansible.builtin.set_fact:
     rtl8814au_folder=/root/rtl8814au/
 
 - name: copy driver
-  copy:
+  ansible.builtin.copy:
     src: rtl8814au/
     dest: "{{ rtl8814au_folder }}"
     owner: root
@@ -14,7 +14,7 @@
     force: no
 
 - name: Install rtl8814au dkms
-  apt:
+  ansible.builtin.apt:
     deb: "{{ item }}"
     state: present
   with_items:

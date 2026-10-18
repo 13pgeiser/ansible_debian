@@ -25,12 +25,12 @@
 
 - name: Create daemon.json
   ansible.builtin.template: src=daemon.json.j2 dest=/etc/docker/daemon.json owner=root group=root mode=0644
-  register: daemon_settings
+  register: docker_daemon_settings
   notify: Restart docker service
 
 #- name: Create docker_insecure_registries
 #  template: src=insecure.j2 dest=/etc/containers/registries.conf.d/insecure.conf owner=root group=root mode=0644
-#  register: daemon_settings
+#  register: docker_daemon_settings
 #  notify: Restart docker service
 
 - name: Create folder for systemd settings
@@ -39,7 +39,7 @@
 
 - name: Set proxy settings
   ansible.builtin.template: src=http-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/http-proxy.conf owner=root group=root mode=0644
-  register: proxy_settings
+  register: docker_proxy_settings
   notify: Restart docker service
 
 

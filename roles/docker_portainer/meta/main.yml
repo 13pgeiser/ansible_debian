@@ -3,7 +3,7 @@ galaxy_info:
   author: Pascal Geiser
   description: Install portainer in docker.
   license: license MIT
-  min_ansible_version: 2.8
+  min_ansible_version: "2.8"
   platforms:
   - name: Debian
     versions:
@@ -12,6 +12,4 @@ galaxy_info:
     - debian
     - docker
     - portainer
-  dependencies:
-    - { name: 'ansible_docker', src: 'git+https://13pgeiser@github.com/13pgeiser/ansible_docker.git' }
 

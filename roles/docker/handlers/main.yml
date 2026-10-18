@@ -2,5 +2,5 @@
 
 - name: Restart docker service
   ansible.builtin.service: name=docker state=restarted enabled=yes daemon_reload=yes
-  when: daemon_settings.changed or proxy_settings.changed
+  when: docker_daemon_settings.changed or docker_proxy_settings.changed
   become: yes

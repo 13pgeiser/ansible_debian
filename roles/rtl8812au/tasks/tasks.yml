@@ -1,7 +1,7 @@
 ---
 
 - name: Install linux headers
-  apt:
+  ansible.builtin.apt:
     name="{{ pkgs }}"
     state="present"
     update_cache=True
@@ -42,20 +42,20 @@
       #    hash: 'sha256:19146a3a56ec2df7c326b6d059546b5387b6892cec78a38b3ed62ce62aa2062a'
 
 - name: set facts
-  set_fact:
-    deb: 'realtek-rtl88xxau-dkms_5.6.4.2~git20210327.c0ce817-0kali1_all.deb'
-    hash: 'sha256:9d9b059f62ec62d618ecd134615cfdb5e82cb4b19bd7d35fad9de2add41d8c0c'
+  ansible.builtin.set_fact:
+    rtl8812au_deb: 'realtek-rtl88xxau-dkms_5.6.4.2~git20210327.c0ce817-0kali1_all.deb'
+    rtl8812au_hash: 'sha256:9d9b059f62ec62d618ecd134615cfdb5e82cb4b19bd7d35fad9de2add41d8c0c'
 
 - name: download rtl8812au-dkms deb
-  get_url:
-    url: "http://http.kali.org/pool/contrib/r/realtek-rtl88xxau-dkms/{{ deb }}"
-    dest: "/root/{{ deb }}"
+  ansible.builtin.get_url:
+    url: "http://http.kali.org/pool/contrib/r/realtek-rtl88xxau-dkms/{{ rtl8812au_deb }}"
+    dest: "/root/{{ rtl8812au_deb }}"
     mode: 0644
-    checksum: "{{ hash }}"
+    checksum: "{{ rtl8812au_hash }}"
 
 - name: Install rtl8812au package
-  apt:
-    deb="/root/{{ deb }}"
+  ansible.builtin.apt:
+    deb="/root/{{ rtl8812au_deb }}"
     state="present"
     update_cache=True
     install_recommends=False
