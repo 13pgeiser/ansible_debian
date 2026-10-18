@@ -1,7 +1,7 @@
 ---
 
 - name: Setup Portainer
-  docker_container:
+  community.docker.docker_container:
     name: portainer
     image: "{{ docker_portainer_image }}"
     ports:

@@ -1,4 +1,4 @@
 ---
 
-- import_tasks: "{{ role_path }}/tasks/tasks.yml"
+- ansible.builtin.import_tasks: "{{ role_path }}/tasks/tasks.yml"
   become: yes

@@ -1,7 +1,7 @@
 ---
 
 - name: Print informations
-  debug:
+  ansible.builtin.debug:
     msg:
       - "ansible_host                       = {{ ansible_host }}"
       - "ansible_architecture               = {{ ansible_facts.architecture }}"
@@ -23,11 +23,11 @@
       - "ansible_memfree_mb                 = {{ ansible_facts.memfree_mb }}"
 
 - name: check if we run precisely debian
-  fail: msg="Unsupported distribution"
+  ansible.builtin.fail: msg="Unsupported distribution"
   when: ansible_facts.distribution != 'Debian'
 
 - name: set apt cache if configured
-  template:
+  ansible.builtin.template:
     src: proxy.j2
     dest: /etc/apt/apt.conf.d/proxy
     owner: root
@@ -36,14 +36,14 @@
   when: apt_cache is defined
 
 - name: Install python3-debian (required by deb822_repository)
-  apt:
+  ansible.builtin.apt:
     name="python3-debian"
     state="present"
     update_cache=True
     install_recommends=False
 
 - name: Add repositories for main contrib non-free non-free-firmware
-  deb822_repository:
+  ansible.builtin.deb822_repository:
     name: debian
     types: [deb]
     uris: [http://http.debian.net/debian]
@@ -52,7 +52,7 @@
     state: present
 
 - name: Add repositories for updates main non-free non-free-firmware
-  deb822_repository:
+  ansible.builtin.deb822_repository:
     name: debian-updates
     types: [deb]
     uris: [http://http.debian.net/debian]
@@ -61,7 +61,7 @@
     state: present
 
 - name: Add repository for debian security.
-  deb822_repository:
+  ansible.builtin.deb822_repository:
     name: debian-security
     types: [deb]
     uris: [http://http.debian.net/debian-security]
@@ -70,7 +70,7 @@
     state: present
 
 - name: Install base packages
-  apt:
+  ansible.builtin.apt:
     name="{{ pkgs }}"
     state="present"
     update_cache=True
@@ -91,7 +91,7 @@
     - acl
 
 - name: Install fastfetch
-  apt:
+  ansible.builtin.apt:
     name="{{ pkgs }}"
     state="present"
     update_cache=True
@@ -101,17 +101,17 @@
     - fastfetch
 
 - name: fastfetch
-  command: "fastfetch"
+  ansible.builtin.command: "fastfetch"
   register: fastfetch
   changed_when: false
 
 - name: Print fastfetch information
-  debug:
+  ansible.builtin.debug:
     msg: "{{ fastfetch.stdout.split('\n') }}"
     verbosity: 2
 
 - name: Install non-free firmwares
-  apt:
+  ansible.builtin.apt:
     name="{{ pkgs }}"
     state="present"
     update_cache=True
@@ -131,7 +131,7 @@
     - firmware-realtek
 
 - name: Install firmware-mediatek
-  apt:
+  ansible.builtin.apt:
     name="{{ pkgs }}"
     state="present"
     update_cache=True
@@ -141,11 +141,11 @@
     - firmware-mediatek
 
 - name: Update all packages to the latest version
-  apt:
+  ansible.builtin.apt:
     upgrade: dist
 
 - name: Force Swiss keyboard settings
-  lineinfile:
+  ansible.builtin.lineinfile:
     regexp: "^{{ item | regex_replace('=.*', '=') }}"
     line: "{{ item }}"
     dest: /etc/default/keyboard
@@ -155,7 +155,7 @@
     - XKBOPTIONS="terminate:ctrl_alt_bks"
 
 - name: select default locale (English International)
-  debconf:
+  ansible.builtin.debconf:
     name: locales
     question: locales/default_environment_locale
     value: en_IN
@@ -164,7 +164,7 @@
     - rebuild locales database
 
 - name: /etc/locale.gen
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/locale.gen
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
@@ -176,7 +176,7 @@
     - rebuild locales database
 
 - name: Remove brltty (causes troubles with USB-Uart cables)
-  apt:
+  ansible.builtin.apt:
     name="{{ pkgs }}"
     state="absent"
   vars:

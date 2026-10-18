@@ -1,7 +1,7 @@
 ---
 
 - name: Install linux headers
-  apt:
+  ansible.builtin.apt:
     name="{{ pkgs }}"
     state="present"
     update_cache=True
@@ -18,7 +18,7 @@
     vtype: boolean
 
 - name: Install zfs-dkms
-  apt:
+  ansible.builtin.apt:
     name="{{ pkgs }}"
     state="present"
     update_cache=False
@@ -28,12 +28,12 @@
     - zfs-dkms
 
 - name: Load zfs module
-  modprobe:
+  community.general.modprobe:
     name: zfs
     state: present
 
 - name: Install zfsutils-linux
-  apt:
+  ansible.builtin.apt:
     name="{{ pkgs }}"
     state="present"
     update_cache=False
@@ -43,7 +43,7 @@
     - zfsutils-linux
 
 - name: Install zfsnap packages
-  apt:
+  ansible.builtin.apt:
     name="{{ pkgs }}"
     state="present"
     update_cache=False

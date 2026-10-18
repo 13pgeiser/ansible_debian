@@ -1,7 +1,7 @@
 ---
 
 - name: Create users
-  user:
+  ansible.builtin.user:
     name: "{{ item.name }}"
     password: "{{ item.password }}"
     state: present
