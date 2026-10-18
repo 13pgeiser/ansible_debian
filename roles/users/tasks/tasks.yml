@@ -6,8 +6,7 @@
     password: "{{ item.password }}"
     state: present
     shell: /bin/bash
-    system: no
-    createhome: yes
+    system: false
+    createhome: true
     home: "/home/{{ item.name }}"
   with_items: "{{ users }}"
-

@@ -6,4 +6,3 @@
   with_subelements:
     - "{{ users }}"
     - groups
-

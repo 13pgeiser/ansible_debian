@@ -8,10 +8,10 @@
     install_recommends: false
   vars:
     pkgs:
-    - docker.io
-    - docker-buildx
-    - docker-compose
-    - python3-requests
+      - docker.io
+      - docker-buildx
+      - docker-compose
+      - python3-requests
 
 - name: Install docker cli
   ansible.builtin.apt:
@@ -21,7 +21,7 @@
     install_recommends: false
   vars:
     pkgs:
-    - docker-cli
+      - docker-cli
 
 - name: Create daemon.json
   ansible.builtin.template:
@@ -33,7 +33,7 @@
   register: docker_daemon_settings
   notify: Restart docker service
 
-#- name: Create docker_insecure_registries
+# - name: Create docker_insecure_registries
 #  template: src=insecure.j2 dest=/etc/containers/registries.conf.d/insecure.conf owner=root group=root mode=0644
 #  register: docker_daemon_settings
 #  notify: Restart docker service
@@ -53,5 +53,3 @@
     mode: "0644"
   register: docker_proxy_settings
   notify: Restart docker service
-
-

@@ -5,15 +5,14 @@
     name: portainer
     image: "{{ docker_portainer_image }}"
     ports:
-    - "9000:9000"
+      - "9000:9000"
     restart_policy: on-failure
     volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-    - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
     comparisons:
       networks: strict
     network_mode: bridge
     networks:
       - name: bridge
-    networks_cli_compatible: yes
-
+    networks_cli_compatible: true

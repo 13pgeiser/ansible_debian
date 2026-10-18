@@ -5,6 +5,5 @@
   with_items:
     - dpkg-reconfigure locales -f noninteractive
     - /usr/sbin/locale-gen
-  become: yes
+  become: true
   changed_when: true
-

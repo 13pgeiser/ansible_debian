@@ -10,8 +10,8 @@
     dest: "{{ rtl8814au_folder }}"
     owner: root
     group: root
-    mode: 0644
-    force: no
+    mode: "0644"
+    force: false
 
 - name: Install rtl8814au dkms
   ansible.builtin.apt:

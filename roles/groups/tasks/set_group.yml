@@ -5,18 +5,17 @@
     cmd: "egrep -i '^{{ item.1 }}:' /etc/group"
   register: groups_group_exists
   changed_when: false
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: "Check user membership {{ item.0.name ~ ' ' ~ item.1 }}"
   ansible.builtin.command:
     cmd: "egrep -i '^{{ item.1 }}.*{{ item.0.name }}.*' /etc/group"
   register: groups_user_is_member_of_group
   changed_when: false
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: "Add to group {{ item.1 ~ ' ' ~ item.0.name }}"
   ansible.builtin.command:
     cmd: "usermod -a -G {{ item.1 }} {{ item.0.name }}"
   changed_when: true
   when: groups_group_exists.rc == 0 and groups_user_is_member_of_group.rc != 0
-

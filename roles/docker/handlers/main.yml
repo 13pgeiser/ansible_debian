@@ -4,7 +4,7 @@
   ansible.builtin.service:
     name: docker
     state: restarted
-    enabled: yes
-    daemon_reload: yes
+    enabled: true
+    daemon_reload: true
   when: docker_daemon_settings.changed or docker_proxy_settings.changed
-  become: yes
+  become: true

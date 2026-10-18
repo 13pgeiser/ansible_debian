@@ -8,7 +8,7 @@
     install_recommends: false
   vars:
     pkgs:
-    - linux-headers-amd64
+      - linux-headers-amd64
 
 - name: Accept license
   ansible.builtin.debconf:
@@ -25,7 +25,7 @@
     install_recommends: false
   vars:
     pkgs:
-    - zfs-dkms
+      - zfs-dkms
 
 - name: Load zfs module
   community.general.modprobe:
@@ -40,7 +40,7 @@
     install_recommends: false
   vars:
     pkgs:
-    - zfsutils-linux
+      - zfsutils-linux
 
 - name: Install zfsnap packages
   ansible.builtin.apt:
@@ -50,4 +50,4 @@
     install_recommends: false
   vars:
     pkgs:
-    - zfsnap
+      - zfsnap
