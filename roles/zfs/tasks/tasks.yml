@@ -2,10 +2,10 @@
 
 - name: Install linux headers
   ansible.builtin.apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=True
-    install_recommends=False
+    name: "{{ pkgs }}"
+    state: present
+    update_cache: true
+    install_recommends: false
   vars:
     pkgs:
     - linux-headers-amd64
@@ -19,10 +19,10 @@
 
 - name: Install zfs-dkms
   ansible.builtin.apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=False
-    install_recommends=False
+    name: "{{ pkgs }}"
+    state: present
+    update_cache: false
+    install_recommends: false
   vars:
     pkgs:
     - zfs-dkms
@@ -34,20 +34,20 @@
 
 - name: Install zfsutils-linux
   ansible.builtin.apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=False
-    install_recommends=False
+    name: "{{ pkgs }}"
+    state: present
+    update_cache: false
+    install_recommends: false
   vars:
     pkgs:
     - zfsutils-linux
 
 - name: Install zfsnap packages
   ansible.builtin.apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=False
-    install_recommends=False
+    name: "{{ pkgs }}"
+    state: present
+    update_cache: false
+    install_recommends: false
   vars:
     pkgs:
     - zfsnap

@@ -2,10 +2,10 @@
 
 - name: Install docker.io and docker-compose
   ansible.builtin.apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=True
-    install_recommends=False
+    name: "{{ pkgs }}"
+    state: present
+    update_cache: true
+    install_recommends: false
   vars:
     pkgs:
     - docker.io
@@ -15,16 +15,21 @@
 
 - name: Install docker cli
   ansible.builtin.apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=True
-    install_recommends=False
+    name: "{{ pkgs }}"
+    state: present
+    update_cache: true
+    install_recommends: false
   vars:
     pkgs:
     - docker-cli
 
 - name: Create daemon.json
-  ansible.builtin.template: src=daemon.json.j2 dest=/etc/docker/daemon.json owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
   register: docker_daemon_settings
   notify: Restart docker service
 
@@ -34,11 +39,18 @@
 #  notify: Restart docker service
 
 - name: Create folder for systemd settings
-  ansible.builtin.file: path=/etc/systemd/system/docker.service.d/ state=directory
-    mode=0644
+  ansible.builtin.file:
+    path: /etc/systemd/system/docker.service.d/
+    state: directory
+    mode: "0644"
 
 - name: Set proxy settings
-  ansible.builtin.template: src=http-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/http-proxy.conf owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: http-proxy.conf.j2
+    dest: /etc/systemd/system/docker.service.d/http-proxy.conf
+    owner: root
+    group: root
+    mode: "0644"
   register: docker_proxy_settings
   notify: Restart docker service
 

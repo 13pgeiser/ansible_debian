@@ -2,9 +2,9 @@
 
 - name: Set distination for deb packages
   ansible.builtin.set_fact:
-    rtl8814au_folder=/root/rtl8814au/
+    rtl8814au_folder: /root/rtl8814au/
 
-- name: copy driver
+- name: Copy driver
   ansible.builtin.copy:
     src: rtl8814au/
     dest: "{{ rtl8814au_folder }}"

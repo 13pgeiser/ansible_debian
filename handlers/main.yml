@@ -1,9 +1,10 @@
 ---
 
-- name: rebuild locales database
+- name: Rebuild locales database
   ansible.builtin.command: "{{ item }}"
   with_items:
     - dpkg-reconfigure locales -f noninteractive
     - /usr/sbin/locale-gen
   become: yes
+  changed_when: true
 

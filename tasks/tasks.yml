@@ -22,11 +22,12 @@
       - "ansible_memtotal_mb                = {{ ansible_facts.memtotal_mb }}"
       - "ansible_memfree_mb                 = {{ ansible_facts.memfree_mb }}"
 
-- name: check if we run precisely debian
-  ansible.builtin.fail: msg="Unsupported distribution"
+- name: Check if we run precisely debian
+  ansible.builtin.fail:
+    msg: "Unsupported distribution"
   when: ansible_facts.distribution != 'Debian'
 
-- name: set apt cache if configured
+- name: Set apt cache if configured
   ansible.builtin.template:
     src: proxy.j2
     dest: /etc/apt/apt.conf.d/proxy
@@ -37,10 +38,10 @@
 
 - name: Install python3-debian (required by deb822_repository)
   ansible.builtin.apt:
-    name="python3-debian"
-    state="present"
-    update_cache=True
-    install_recommends=False
+    name: python3-debian
+    state: present
+    update_cache: true
+    install_recommends: false
 
 - name: Add repositories for main contrib non-free non-free-firmware
   ansible.builtin.deb822_repository:
@@ -71,10 +72,10 @@
 
 - name: Install base packages
   ansible.builtin.apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=True
-    install_recommends=False
+    name: "{{ pkgs }}"
+    state: present
+    update_cache: true
+    install_recommends: false
   vars:
     pkgs:
     - python3-psutil
@@ -92,15 +93,15 @@
 
 - name: Install fastfetch
   ansible.builtin.apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=True
-    install_recommends=False
+    name: "{{ pkgs }}"
+    state: present
+    update_cache: true
+    install_recommends: false
   vars:
     pkgs:
     - fastfetch
 
-- name: fastfetch
+- name: Fastfetch
   ansible.builtin.command: "fastfetch"
   register: fastfetch
   changed_when: false
@@ -112,10 +113,10 @@
 
 - name: Install non-free firmwares
   ansible.builtin.apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=True
-    install_recommends=False
+    name: "{{ pkgs }}"
+    state: present
+    update_cache: true
+    install_recommends: false
   vars:
     pkgs:
     - firmware-linux-nonfree
@@ -132,10 +133,10 @@
 
 - name: Install firmware-mediatek
   ansible.builtin.apt:
-    name="{{ pkgs }}"
-    state="present"
-    update_cache=True
-    install_recommends=False
+    name: "{{ pkgs }}"
+    state: present
+    update_cache: true
+    install_recommends: false
   vars:
     pkgs:
     - firmware-mediatek
@@ -154,14 +155,14 @@
     - XKBVARIANT="fr"
     - XKBOPTIONS="terminate:ctrl_alt_bks"
 
-- name: select default locale (English International)
+- name: Select default locale (English International)
   ansible.builtin.debconf:
     name: locales
     question: locales/default_environment_locale
     value: en_IN
     vtype: select
   notify:
-    - rebuild locales database
+    - Rebuild locales database
 
 - name: /etc/locale.gen
   ansible.builtin.lineinfile:
@@ -173,12 +174,12 @@
     - { regexp: '^#? ?en_IN UTF-8', line: 'en_IN UTF-8', state: present }
     - { regexp: '^#? ?en_US.UTF-8 UTF-8', line: 'en_US.UTF-8 UTF-8', state: present }
   notify:
-    - rebuild locales database
+    - Rebuild locales database
 
 - name: Remove brltty (causes troubles with USB-Uart cables)
   ansible.builtin.apt:
-    name="{{ pkgs }}"
-    state="absent"
+    name: "{{ pkgs }}"
+    state: absent
   vars:
     pkgs:
     - brltty

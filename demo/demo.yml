@@ -1,6 +1,7 @@
 ---
 
-- hosts: demo
+- name: Demo
+  hosts: demo
   roles:
     - ansible_debian
     - users

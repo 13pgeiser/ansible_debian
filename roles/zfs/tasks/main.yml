@@ -1,5 +1,6 @@
 ---
 
-- ansible.builtin.import_tasks: "{{ role_path }}/tasks/tasks.yml"
+- name: Import tasks
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/tasks.yml"
   become: yes
   when: (zfs_enable is defined) and zfs_enable

@@ -1,7 +1,8 @@
 ---
 
 
-- ansible.builtin.include_tasks: set_group.yml
+- name: Include group tasks
+  ansible.builtin.include_tasks: set_group.yml
   with_subelements:
     - "{{ users }}"
     - groups
