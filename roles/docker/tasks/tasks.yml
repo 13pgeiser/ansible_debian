@@ -53,3 +53,4 @@
     mode: "0644"
   register: docker_proxy_settings
   notify: Restart docker service
+  when: http_proxy is defined
