@@ -37,6 +37,27 @@
     mode: "0644"
   when: apt_cache is defined
 
+- name: Gather the package facts
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Create temporary bootstrap DEB822 file (Only if python3-debian is missing)
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/bootstrap-debian.sources
+    content: |
+      Types: deb
+      URIs: http://deb.debian.org/debian
+      Suites: trixie
+      Components: main
+      Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+    mode: '0644'
+  when: "'python3-debian' not in ansible_facts.packages"
+
+- name: Update apt cache manually after bootstrap file creation
+  ansible.builtin.apt:
+    update_cache: true
+  when: "'python3-debian' not in ansible_facts.packages"
+
 - name: Install python3-debian (required by deb822_repository)
   ansible.builtin.apt:
     name: python3-debian
@@ -48,16 +69,22 @@
   ansible.builtin.deb822_repository:
     name: debian
     types: [deb]
-    uris: [http://http.debian.net/debian]
+    uris: [http://deb.debian.org/debian]
     suites: ["{{ ansible_facts.distribution_release }}"]
     components: [main, contrib, non-free, non-free-firmware]
     state: present
+
+- name: Remove temporary bootstrap file
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/bootstrap-debian.sources
+    state: absent
+  when: "'python3-debian' not in ansible_facts.packages"
 
 - name: Add repositories for updates main non-free non-free-firmware
   ansible.builtin.deb822_repository:
     name: debian-updates
     types: [deb]
-    uris: [http://http.debian.net/debian]
+    uris: [http://deb.debian.org/debian]
     suites: ["{{ ansible_facts.distribution_release }}-updates"]
     components: [main, non-free, non-free-firmware]
     state: present
@@ -66,7 +93,7 @@
   ansible.builtin.deb822_repository:
     name: debian-security
     types: [deb]
-    uris: [http://http.debian.net/debian-security]
+    uris: [https://security.debian.org/debian-security]
     suites: ["{{ ansible_facts.distribution_release }}-security"]
     components: [main]
     state: present
