@@ -184,3 +184,12 @@
   vars:
     pkgs:
       - brltty
+
+- name: Ensure StreamLocalBindUnlink is enabled in sshd_config
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '(?i)^#?\s*StreamLocalBindUnlink'
+    line: 'StreamLocalBindUnlink yes'
+    state: present
+    validate: '/usr/sbin/sshd -t -f %s'
+  notify: Restart SSH

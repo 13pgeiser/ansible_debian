@@ -7,3 +7,10 @@
     - /usr/sbin/locale-gen
   become: true
   changed_when: true
+
+- name: Restart SSH
+  ansible.builtin.service:
+    name: sshd
+    state: restarted
+  become: true
+  changed_when: true
