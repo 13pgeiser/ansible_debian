@@ -73,6 +73,7 @@
     suites: ["{{ ansible_facts.distribution_release }}"]
     components: [main, contrib, non-free, non-free-firmware]
     state: present
+    signed_by: /usr/share/keyrings/debian-archive-keyring.gpg
 
 - name: Remove temporary bootstrap file
   ansible.builtin.file:
@@ -88,6 +89,7 @@
     suites: ["{{ ansible_facts.distribution_release }}-updates"]
     components: [main, non-free, non-free-firmware]
     state: present
+    signed_by: /usr/share/keyrings/debian-archive-keyring.gpg
 
 - name: Add repository for debian security.
   ansible.builtin.deb822_repository:
@@ -97,6 +99,7 @@
     suites: ["{{ ansible_facts.distribution_release }}-security"]
     components: [main]
     state: present
+    signed_by: /usr/share/keyrings/debian-archive-keyring.gpg
 
 - name: Install base packages
   ansible.builtin.apt:
@@ -139,7 +142,7 @@
     msg: "{{ fastfetch.stdout.split('\n') }}"
     verbosity: 2
 
-- name: Install non-free firmwares
+- name: Install firmwares
   ansible.builtin.apt:
     name: "{{ pkgs }}"
     state: present
@@ -151,22 +154,6 @@
       - firmware-misc-nonfree
       - firmware-linux-free
       - firmware-linux
-      - firmware-atheros
-      - firmware-brcm80211
-      - firmware-intel-sound
-      - firmware-iwlwifi
-      - firmware-libertas
-      - firmware-ralink
-      - firmware-realtek
-
-- name: Install firmware-mediatek
-  ansible.builtin.apt:
-    name: "{{ pkgs }}"
-    state: present
-    update_cache: true
-    install_recommends: false
-  vars:
-    pkgs:
       - firmware-mediatek
 
 - name: Update all packages to the latest version
